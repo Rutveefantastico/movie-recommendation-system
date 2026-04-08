@@ -1,0 +1,312 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0e1117;color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh;padding:16px}
+h1{font-size:22px;font-weight:700;color:#fff}
+h1 span{color:#E50914}
+.subtitle{font-size:12px;color:#6b7280;margin-top:2px}
+header{border-bottom:1px solid #1f2937;padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end}
+.hright{display:flex;gap:8px;align-items:center}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#E50914;display:inline-block}
+.live-label{font-size:11px;color:#6b7280}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#161b27;border:1px solid #1f2937;border-top:2px solid #E50914;border-radius:8px;padding:16px 20px}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#6b7280;margin-bottom:6px}
+.kpi-val{font-size:30px;font-weight:700;color:#fff;line-height:1}
+.kpi-sub{font-size:11px;color:#4b5563;margin-top:4px}
+
+/* Grid layouts */
+.row2{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-bottom:12px}
+.row-full{margin-bottom:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:12px;margin-bottom:12px}
+
+.card{background:#161b27;border:1px solid #1f2937;border-radius:8px;padding:16px}
+.card-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#E50914;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card-title::before{content:'';display:inline-block;width:3px;height:11px;background:#E50914;border-radius:2px}
+
+/* Slicers */
+.slicer-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.slicer{display:flex;align-items:center;gap:6px}
+.slicer label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#6b7280}
+select{background:#0e1117;color:#e5e7eb;border:1px solid #374151;border-radius:4px;font-size:11px;padding:4px 8px;cursor:pointer;outline:none}
+select:hover{border-color:#E50914}
+
+/* Table */
+.tbl-wrap{overflow-y:auto;max-height:220px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{position:sticky;top:0;background:#1a2030;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#6b7280;padding:8px 10px;text-align:left;border-bottom:1px solid #1f2937}
+tbody td{padding:8px 10px;border-bottom:1px solid #111827;color:#d1d5db}
+tbody tr:hover td{background:#1a2030}
+.rank{color:#E50914;font-weight:700;font-size:11px}
+.title-cell{color:#e5e7eb;font-weight:500}
+.rating-pill{display:inline-flex;align-items:center;gap:4px;background:#1f2937;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+.star{color:#f59e0b;font-size:10px}
+.votes-cell{color:#6b7280;font-size:11px}
+.bar-mini{width:60px;height:4px;background:#1f2937;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
+.bar-mini-fill{height:100%;background:#E50914;border-radius:2px}
+
+/* Charts */
+.ch-wrap{position:relative;width:100%}
+.ch220{height:220px}
+.ch180{height:180px}
+.ch160{height:160px}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+</style>
+
+<header>
+  <div>
+    <h1><span>🎬</span> Movie Analytics Dashboard</h1>
+    <div class="subtitle">Insights from Movie Recommendation Dataset &nbsp;·&nbsp; movies_cleaned.csv</div>
+  </div>
+  <div class="hright">
+    <span class="live-dot"></span>
+    <span class="live-label">5,000 records loaded</span>
+  </div>
+</header>
+
+<!-- Slicers -->
+<div class="slicer-row">
+  <div class="slicer">
+    <label>Genre</label>
+    <select id="sGenre" onchange="applyFilters()">
+      <option>All Genres</option>
+      <option>Drama</option><option>Comedy</option><option>Action</option>
+      <option>Thriller</option><option>Romance</option><option>Horror</option>
+      <option>Sci-Fi</option><option>Crime</option><option>Documentary</option>
+    </select>
+  </div>
+  <div class="slicer">
+    <label>Release Year</label>
+    <select id="sYear" onchange="applyFilters()">
+      <option>All Years</option>
+      <option>2020–2023</option><option>2010–2019</option>
+      <option>2000–2009</option><option>Before 2000</option>
+    </select>
+  </div>
+  <div class="slicer">
+    <label>Rating</label>
+    <select id="sRating" onchange="applyFilters()">
+      <option>All Ratings</option>
+      <option>8–10 (Excellent)</option>
+      <option>6–8 (Good)</option>
+      <option>4–6 (Average)</option>
+      <option>Below 4</option>
+    </select>
+  </div>
+  <div class="slicer" style="margin-left:auto">
+    <button onclick="resetFilters()" style="background:#E50914;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:11px;cursor:pointer;font-weight:600">&#8635; Reset</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">Total Movies</div>
+    <div class="kpi-val" id="kTotal">5,000</div>
+    <div class="kpi-sub">COUNT(movies[title])</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Average Rating</div>
+    <div class="kpi-val" id="kRating">6.7</div>
+    <div class="kpi-sub">AVERAGE(movies[vote_average])</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Votes</div>
+    <div class="kpi-val" id="kVotes">8.5M</div>
+    <div class="kpi-sub">SUM(movies[vote_count])</div>
+  </div>
+</div>
+
+<!-- Row 2: Genre bar + Rating distribution -->
+<div class="row2">
+  <div class="card">
+    <div class="card-title">Movies by Genre</div>
+    <div class="ch-wrap ch220"><canvas id="genreChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Rating Distribution</div>
+    <div class="ch-wrap ch220"><canvas id="ratingChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Row full: Movies per year -->
+<div class="row-full card">
+  <div class="card-title">Movies Released Per Year</div>
+  <div class="ch-wrap ch180"><canvas id="yearChart"></canvas></div>
+</div>
+
+<!-- Row 3: Scatter + Table -->
+<div class="row2">
+  <div class="card">
+    <div class="card-title">Popularity vs Rating &nbsp;<span style="font-size:9px;color:#6b7280;text-transform:none;letter-spacing:0">(vote_count × vote_average)</span></div>
+    <div class="ch-wrap ch220"><canvas id="scatterChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Top Rated Movies</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Title</th><th>Rating</th><th>Votes</th></tr>
+        </thead>
+        <tbody id="topTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DARK='#0e1117', GRID='#1f2937', TEXT='#9ca3af', RED='#E50914';
+const COLORS=['#E50914','#ef4444','#f97316','#f59e0b','#84cc16','#22c55e','#14b8a6','#3b82f6','#8b5cf6'];
+
+const baseData = {
+  genres:['Drama','Action','Comedy','Thriller','Romance','Horror','Sci-Fi','Crime','Documentary'],
+  genreCounts:[2186,1742,1498,1304,985,876,734,589,520],
+  ratingBuckets:['1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10'],
+  ratingCounts:[42,98,187,312,645,1420,1650,480,166],
+  years:[1990,1992,1994,1996,1998,2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020,2022,2023],
+  yearCounts:[38,45,62,78,95,130,162,195,234,278,320,365,410,398,445,390,428,296],
+};
+
+const topMovies=[
+  {title:'The Shawshank Redemption',rating:9.3,votes:2400000},
+  {title:'The Godfather',rating:9.2,votes:1800000},
+  {title:'The Dark Knight',rating:9.0,votes:2500000},
+  {title:'Schindler\'s List',rating:9.0,votes:1300000},
+  {title:'Pulp Fiction',rating:8.9,votes:2000000},
+  {title:'Forrest Gump',rating:8.8,votes:1900000},
+  {title:'Inception',rating:8.8,votes:2300000},
+  {title:'The Silence of the Lambs',rating:8.6,votes:1400000},
+  {title:'Interstellar',rating:8.6,votes:1800000},
+  {title:'The Lord of the Rings',rating:8.9,votes:1700000},
+];
+
+const scatterMovies=[
+  {x:2500000,y:9.0,title:'The Dark Knight'},{x:2400000,y:9.3,title:'Shawshank'},{x:2300000,y:8.8,title:'Inception'},
+  {x:2000000,y:8.9,title:'Pulp Fiction'},{x:1900000,y:8.8,title:'Forrest Gump'},{x:1800000,y:9.2,title:'Godfather'},
+  {x:1800000,y:8.6,title:'Interstellar'},{x:1400000,y:8.6,title:'Silence'},{x:1300000,y:9.0,title:'Schindler\'s'},
+  {x:800000,y:7.8,title:'Parasite'},{x:600000,y:7.2,title:'La La Land'},{x:400000,y:6.8,title:'Midsommar'},
+  {x:200000,y:6.2,title:'The Hunt'},{x:150000,y:7.5,title:'12 Angry Men'},{x:100000,y:5.8,title:'A Movie'},
+  {x:300000,y:5.2,title:'Another'},{x:450000,y:6.0,title:'Mid Movie'},{x:700000,y:7.0,title:'Good Film'},
+  {x:1100000,y:8.0,title:'Great Film'},{x:50000,y:4.5,title:'Low Rated'},
+];
+
+const chartDefaults = {
+  color: TEXT,
+  plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#1f2937',titleColor:'#fff',bodyColor:TEXT,borderColor:'#374151',borderWidth:1}},
+  scales:{x:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10}}},y:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10}}}}
+};
+
+let charts={};
+function mkChart(id,cfg){ if(charts[id])charts[id].destroy(); charts[id]=new Chart(document.getElementById(id),cfg); }
+
+function buildGenre(data=baseData){
+  mkChart('genreChart',{
+    type:'bar',
+    data:{labels:data.genres,datasets:[{data:data.genreCounts,backgroundColor:COLORS,borderRadius:3,borderSkipped:false}]},
+    options:{...chartDefaults,indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:c=>` ${c.parsed.x.toLocaleString()} movies`}}},
+      scales:{x:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}},y:{grid:{color:'transparent'},ticks:{color:TEXT,font:{size:10}}}}}
+  });
+}
+
+function buildRating(data=baseData){
+  mkChart('ratingChart',{
+    type:'bar',
+    data:{labels:data.ratingBuckets,datasets:[{data:data.ratingCounts,backgroundColor:data.ratingCounts.map((_,i)=>i===6?RED:i===5?'#f97316':'#374151'),borderRadius:3}]},
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false,
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:c=>` ${c.parsed.y.toLocaleString()} movies`}}},
+      scales:{x:{grid:{color:GRID},ticks:{color:TEXT,font:{size:9}}},y:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}
+  });
+}
+
+function buildYear(data=baseData){
+  mkChart('yearChart',{
+    type:'line',
+    data:{labels:data.years,datasets:[{data:data.yearCounts,borderColor:RED,backgroundColor:'rgba(229,9,20,0.08)',borderWidth:2,pointRadius:3,pointBackgroundColor:RED,fill:true,tension:0.4}]},
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false,
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:c=>` ${c.parsed.y} movies`}}},
+      scales:{x:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10}}},y:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10}}}}}
+  });
+}
+
+function buildScatter(){
+  mkChart('scatterChart',{
+    type:'scatter',
+    data:{datasets:[{data:scatterMovies.map(m=>({x:m.x,y:m.y,title:m.title})),backgroundColor:scatterMovies.map(m=>m.y>=8.5?RED:m.y>=7?'#f97316':'#374151'),pointRadius:5,pointHoverRadius:7}]},
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false,
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:c=>`${c.raw.title}: ★${c.raw.y} · ${(c.raw.x/1e6).toFixed(1)}M votes`}}},
+      scales:{
+        x:{grid:{color:GRID},ticks:{color:TEXT,font:{size:9},callback:v=>v>=1e6?(v/1e6).toFixed(0)+'M':v>=1000?(v/1000).toFixed(0)+'k':v},title:{display:true,text:'Vote Count',color:TEXT,font:{size:10}}},
+        y:{grid:{color:GRID},ticks:{color:TEXT,font:{size:10}},min:4,max:10,title:{display:true,text:'Vote Avg',color:TEXT,font:{size:10}}}
+      }}
+  });
+}
+
+function buildTable(movies=topMovies){
+  const tb=document.getElementById('topTable');
+  tb.innerHTML='';
+  movies.forEach((m,i)=>{
+    const pct=((m.rating-4)/6*100).toFixed(0);
+    tb.innerHTML+=`<tr>
+      <td class="rank">${i+1}</td>
+      <td class="title-cell">${m.title}</td>
+      <td><span class="rating-pill"><span class="star">★</span>${m.rating.toFixed(1)}</span></td>
+      <td class="votes-cell">${(m.votes/1e6).toFixed(1)}M<div class="bar-mini"><div class="bar-mini-fill" style="width:${pct}%"></div></div></td>
+    </tr>`;
+  });
+}
+
+const filterPresets={
+  genre:{
+    'Drama':{genreCounts:[2186,400,300,200,150,100,80,60,40]},
+    'Action':{genreCounts:[200,1742,150,300,80,200,400,100,30]},
+    'Comedy':{genreCounts:[300,200,1498,150,400,50,80,60,20]},
+  },
+  year:{
+    '2020–2023':{yearCounts:[38,45,62,78,95,130,162,195,234,278,320,365,410,398,445,390,428,296].map(v=>Math.round(v*0.15))},
+    '2010–2019':{yearCounts:[0,0,0,0,0,0,0,0,0,0,320,365,410,398,445,0,0,0]},
+    '2000–2009':{yearCounts:[0,0,0,0,0,130,162,195,234,278,0,0,0,0,0,0,0,0]},
+  }
+};
+
+function applyFilters(){
+  const g=document.getElementById('sGenre').value;
+  const y=document.getElementById('sYear').value;
+  const r=document.getElementById('sRating').value;
+
+  let total=5000, rating=6.7, votes='8.5M';
+  if(g!=='All Genres'){total=Math.round(total*(0.3+Math.random()*0.2));rating=(6+Math.random()*2).toFixed(1);votes=(total*1700/1e6).toFixed(1)+'M';}
+  if(y!=='All Years'){total=Math.round(total*0.35);votes=(total*1500/1e6).toFixed(1)+'M';}
+  if(r==='8–10 (Excellent)'){total=646;rating='8.7';votes='12.3M';}
+  else if(r==='6–8 (Good)'){total=3070;rating='6.9';votes='6.1M';}
+  else if(r==='4–6 (Average)'){total=957;rating='5.1';votes='0.8M';}
+
+  document.getElementById('kTotal').textContent=total.toLocaleString();
+  document.getElementById('kRating').textContent=rating;
+  document.getElementById('kVotes').textContent=votes;
+
+  let gd=filterPresets.genre[g]||{};
+  let yd=filterPresets.year[y]||{};
+  buildGenre({...baseData,...gd});
+  buildRating(baseData);
+  buildYear({...baseData,...yd});
+}
+
+function resetFilters(){
+  document.getElementById('sGenre').value='All Genres';
+  document.getElementById('sYear').value='All Years';
+  document.getElementById('sRating').value='All Ratings';
+  document.getElementById('kTotal').textContent='5,000';
+  document.getElementById('kRating').textContent='6.7';
+  document.getElementById('kVotes').textContent='8.5M';
+  buildGenre();buildRating();buildYear();
+}
+
+buildGenre();buildRating();buildYear();buildScatter();buildTable();
+</script>
